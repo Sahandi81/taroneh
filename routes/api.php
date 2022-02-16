@@ -16,6 +16,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\errorController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SettingController;
@@ -34,6 +35,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 
 # Public Routes
 Route::get('client_connection_test', function (){ return ['Connection'=> 'OK'];});
@@ -79,6 +81,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
             Route::get('cart',                  [CartController::class, 'index'])                                   ->name('add.product.to.cart');
             Route::post('buy',                  [ShoppingController::class, 'index'])                               ->name('add.product.to.cart');
             Route::get('shopping_history',      [ShoppingController::class, 'shoppingHistory'])                     ->name('add.product.to.cart');
+            Route::post('gateway',              [PaymentController::class, 'gateway'])                              ->name('gateway');
         });
     });
 
