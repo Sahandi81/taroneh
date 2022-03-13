@@ -22,6 +22,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ShoppingController;
 use App\Http\Controllers\SpecialSaleController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\WishListController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,7 +49,8 @@ Route::post('login',                        [UserController::class, 'login'])   
 Route::get('shop',                          [ProductController::class, 'index'])                                ->name('shop');
 Route::get('shop/single_product',           [ProductController::class, 'singleProduct'])                        ->name('single.product');
 Route::get('special_sales',                 [SpecialSaleController::class, 'index'])                            ->name('special.sales');
-Route::get('categories/',                   [CategoryController::class, 'index'])                               ->name('categories');
+Route::get('categories/',                   [CategoryController::class, 'category'])                               ->name('categories');
+Route::get('subcategories/',                [CategoryController::class, 'subCategory'])                               ->name('categories');
 Route::get('amazing_offer',                 [AmazingOffersController::class, 'index'])                          ->name('amazing.offer');
 Route::get('search',                        [SearchController::class, 'searchProduct'])                         ->name('search.products');
 Route::get('setting',                       [SettingController::class, 'index'])                                ->name('get.setting');
@@ -82,6 +84,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
             Route::post('buy',                  [ShoppingController::class, 'index'])                               ->name('add.product.to.cart');
             Route::get('shopping_history',      [ShoppingController::class, 'shoppingHistory'])                     ->name('add.product.to.cart');
             Route::post('gateway',              [PaymentController::class, 'gateway'])                              ->name('gateway');
+            Route::get('callBack',              [PaymentController::class, 'callback'])                             ->name('payment.callback');
         });
     });
 
@@ -97,8 +100,11 @@ Route::group(['prefix' => 'admin'], function () {
 
             Route::get('dashboard',             [AdminController::class, 'dashboard'])                          	->name('dashboard');
             Route::get('users',             	[AdminUserController::class, 'index'])                          	->name('users');
-            Route::get('orders',             	[AdminShoppingController::class, 'index'])                          ->name('orders');
             Route::get('comment',               [CommentController::class, 'index'])                                ->name('comments');
+            Route::get('statistics',			[StatisticsController::class, 'index'])                             ->name('statistics_users');
+            Route::get('purchase_histories',    [PaymentController::class, 'index'])                                ->name('purchase.histories');
+            Route::get('orders',    			[ShoppingController::class, 'listOrders'])                          ->name('purchase.histories');
+            Route::get('orders/{id}', 			[ShoppingController::class, 'show'])                                ->name('purchase.histories');
 
             Route::post('add_product', 			[AdminProductController::class, 'store'])							->name('add.product');
             Route::post('add_offer', 			[DiscountController::class, 'store'])								->name('add.offer');

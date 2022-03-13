@@ -18,7 +18,7 @@ class SpecialSaleController extends Controller
         $page       = $fields['page'] ?? 1;
 
         $list 		= SpecialSale::all()->sortDesc();
-        $response   = $this->getProductDetails($list, 'product_id', true, false);
+		$response   = $this->getProductDetails($list, 'product_id', true, false);
         $response   = $this->paginator((array)$response, $prepage, $page);
         return [
             'success' => true,

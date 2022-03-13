@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\PurchaseHistory;
 use App\Models\User;
 use App\Traits\ProductBuilder;
+use Illuminate\Support\Facades\Response;
 
 class ShoppingController extends Controller
 {
@@ -77,7 +78,7 @@ class ShoppingController extends Controller
 				'address'		=> $address,
 				'delivery_time'	=> $fields['details']['delivery_time'],
 				'status'		=> 'unpaid',
-				'condition'		=> 'unpaid',
+				'condition'		=> 'not_verified',
 			]);
 			if ($result)
 				return [
@@ -87,7 +88,8 @@ class ShoppingController extends Controller
 					'real' 			=> $payment,
 					'offer' 		=> $allOffers,
 					'final_price' 	=> $payment - $allOffers,
-					'products' 		=> $products
+					'products' 		=> $products,
+					'details'		=> $result,
 				];
 			else
 				return response(['success'=>false, 'msg' => 'UNKNOWNS_ERROR'], 500);
@@ -97,11 +99,35 @@ class ShoppingController extends Controller
 		}
     }
 
+	public function show($id)
+	{
+		$order = PurchaseHistory::with('users')->find($id);
+		if (!$order){
+			return Response::json(['success' => false, 'msg' => 'NOT_FOUND']);
+		}
+		return Response::json(['success' => true, 'details' => $order]);
+	}
+
     public function shoppingHistory()
 	{
 		$user = request()->user();
 		$history = User::find($user->id)->history()->get();
 		return $history;
+	}
+
+	public function listOrders()
+	{
+		$fields = \request()->validate([
+			'per_page'  => 'numeric|regex:/^^(?!(\d)\1{9})\d{1,3}$/',
+			'page'      => 'numeric|regex:/^^(?!(\d)\1{9})\d{1,4}$/',
+		]);
+		$per_page = (int)($fields['per_page'] ?? 15);
+		$list = PurchaseHistory::with('users')->where('deleted_at', null)
+			->orderByDesc('created_at')
+			->paginate($per_page)
+		;
+
+		return ['success' => true, 'details' => $list];
 	}
 
 }

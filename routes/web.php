@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
+Route::get('gateway',               [PaymentController::class, 'gateway'])                              ->name('gateway');
+Route::get('callBack',              [PaymentController::class, 'callback'])                             ->name('payment.callback');
+
 
 Route::get('/', function () {
     return view('welcome');

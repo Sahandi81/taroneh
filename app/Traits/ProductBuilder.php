@@ -14,7 +14,6 @@ trait ProductBuilder
 
     private function categories(Model $product): ?array
     {
-
         $subCategory = $product->subCategory()->first();
         if ($subCategory === null) return null;
         $category = SubCategory::find($subCategory->id)->category()->first();
@@ -28,10 +27,13 @@ trait ProductBuilder
     {
         $response = [];
         foreach ($products as $product){
-            if (!isset($product->$foreignKey)){$response[] = $product; continue;};
+			if (!isset($product->$foreignKey)){$response[] = $product; continue;};
             $details = Product::find($product->$foreignKey);
-            $categories = $this->categories($details);
-            # when modals change ( true > product \ false > specialSale )
+			if (!$details) continue;
+			$categories = $this->categories($details);
+			echo '<pre>';var_export($categories);die('here');
+
+			# when modals change ( true > product \ false > specialSale )
             if ($getOffer)
             	# Product model
             	$offers = $this->getOffer($product);

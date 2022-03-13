@@ -8,6 +8,7 @@
         "php": "^7.3|^8.0",
         "ext-mongodb": "*",
         "ext-pdo": "*",
+        "evryn/laravel-toman": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "jenssegers/mongodb": "^3.8",
@@ -15,7 +16,8 @@
         "laravel/passport": "^10.2",
         "laravel/sanctum": "^2.12",
         "laravel/tinker": "^2.5",
-        "shetabit/payment": "^4.2"
+        "shetabit/payment": "^4.2",
+      "ext-soap": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

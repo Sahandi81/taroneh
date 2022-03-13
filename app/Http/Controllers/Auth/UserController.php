@@ -5,15 +5,16 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Traits\SmsHelper;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+	use SmsHelper;
 
-
-    public function login()
+    public function login(): array
 	{
         $fields = \request()->validate([
             'email'     => 'email',
@@ -34,7 +35,7 @@ class UserController extends Controller
         return  ['success' => true, 'user_details' => $user, 'token' => $user->createToken('token_base_name')->plainTextToken];
     }
 
-    public function sendVerificationCode(Request $request): array
+    public function sendVerificationCode(Request $request)
     {
 
         $response = [];
@@ -43,7 +44,7 @@ class UserController extends Controller
         $fields = \request()->validate([
             'phone' => 'numeric|regex:/(09)[0-9]{9}/|digits:11|required',
         ]);
-        $user = User::where('phone', $fields['phone'])->get()->toArray();
+        $user = User::where('phone', $fields['phone'])->first()->toArray();
         if (! $user){
 
             $user = new User();
@@ -51,19 +52,17 @@ class UserController extends Controller
             $user->f_name = null;
             $user->l_name = null;
             $user->save();
-            $user = $user->toArray();
+            $user = $user->toArray()[0];
             $response['new_user'] = true;
 
         }
 
-        ////////////////
-        # send Sms
-        // $user->verification_code = rand(9999, 99999);
-        // $response['msg'] = 'operation failed';
-        ////////////////
         $expireTime = 500; // Seconds
         $codeExpire = time() + $expireTime;
-        $verificationCode = 12345; // rand(9999, 99999);
+        $verificationCode =  rand(9999, 99999); # 12345;
+
+		self::sendSms($user['phone'], [$verificationCode], 'register');
+
         User::where('phone', $fields['phone'])->update(['verification_code' => $verificationCode, 'code_expire' => $codeExpire]) ;
         $response['msg'] = 'verification code send successfully';
         $response['expire_in'] = $expireTime;

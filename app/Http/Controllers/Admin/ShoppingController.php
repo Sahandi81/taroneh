@@ -17,6 +17,7 @@ class ShoppingController extends Controller
 		$fields = \request()->validate([
 			'per_page'  => 'numeric|regex:/^^(?!(\d)\1{9})\d{1,3}$/',
 			'page'      => 'numeric|regex:/^^(?!(\d)\1{9})\d{1,4}$/',
+			'q'      	=> 'string',
 			'id'		=> 'string|regex:/^[a-f\d]{24}$/',
 		]);
 
@@ -33,7 +34,12 @@ class ShoppingController extends Controller
 		$prepage    = $fields['per_page'] ?? 5;
 		$page       = $fields['page'] ?? 1;
 
-		$orders = PurchaseHistory::all()->toArray();
+		if (isset($fields['q'])){
+			$orders = PurchaseHistory::where('status', $fields['q'])->get()->toArray();
+		}else{
+			$orders = PurchaseHistory::all()->toArray();
+		}
+
 		$orders = array_reverse($orders);
 		$orders = $this->paginator((array)$orders, $prepage, $page);
 		return $orders;
@@ -43,7 +49,8 @@ class ShoppingController extends Controller
 	{
 		$fields = \request()->validate([
 			'id'		=> 'required|string|regex:/^[a-f\d]{24}$/',
-			'condition'	=> 'required|string'
+			'condition'	=> 'required|string',
+			'address'	=> 'numeric'
 		]);
 
 		$order = PurchaseHistory::find($fields['id']);

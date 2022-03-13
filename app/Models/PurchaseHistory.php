@@ -28,4 +28,9 @@ class PurchaseHistory extends Authenticatable
 		'status',
 		'condition',
 	];
+
+	public function users()
+	{
+		return $this->hasOne(User::class, '_id', 'user_id');
+	}
 }
