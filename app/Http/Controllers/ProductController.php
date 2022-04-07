@@ -23,7 +23,8 @@ class ProductController extends Controller
     public function index()
     {
 
-        $fields = \request()->validate([
+
+		$fields = \request()->validate([
             'per_page'   => 'numeric|regex:/^^(?!(\d)\1{9})\d{1,3}$/',
             'page'      => 'numeric|regex:/^^(?!(\d)\1{9})\d{1,4}$/',
             'category'  => 'string|regex:/^[a-f\d]{24}$/',
@@ -63,18 +64,25 @@ class ProductController extends Controller
                 ->paginate((int)$prepage)
             ;
             ;
-        }else
-            $products   = Product::with(['offers','subCategory','specialSale','comments',])
-//                ->sortByDesc('created_at')
-                ->paginate((int)$prepage)
-            ;
+        }else {
 
-        # for more options u can do it on vendor\laravel\framework\src\Illuminate\Pagination\ .php
+			$products = Product::with(['offers', 'subCategory', 'specialSale', 'comments',])
+//                ->sortByDesc('created_at')
+				->paginate((int)$prepage);
+			echo '<pre>';
+			var_export('asd');
+			die('here');
+		}
+
+		# for more options u can do it on vendor\laravel\framework\src\Illuminate\Pagination\ .php
         # Function `toArray`
 ;
 //        $response   = $this->getProductDetails($products);
 
 //        $response   = $this->paginator((array)$response, $prepage, $page);
+
+
+
 
         return $products;
 
