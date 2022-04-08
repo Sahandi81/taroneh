@@ -16,6 +16,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+
+
+Route::get('text-db', function (){
+	return \App\Models\Product::all();
+});
+
+
 Route::get('gateway',               [PaymentController::class, 'gateway'])                              ->name('gateway');
 Route::get('callBack',              [PaymentController::class, 'callback'])                             ->name('payment.callback');
 
